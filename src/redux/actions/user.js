@@ -1,4 +1,4 @@
-import { reqUser, listUserSuccess, deleteUserSuccess,createUserSuccess,updateUserSuccess } from "../reducers/user";
+import { reqUser, listUserSuccess, deleteUserSuccess,createUserSuccess,updateUserSuccess, editUser,editUserDelete } from "../reducers/user";
 
 export const listUsers = () => async (dispatch)=>{
   dispatch(reqUser());
@@ -41,7 +41,6 @@ export const updateUser = (id, newdata) => async (dispatch) => {
 }
 
 export const createUser = (data) => async (dispatch) => {
-    dispatch(reqUser());
     const options = {
         method:'POST',
         headers:{
@@ -61,7 +60,6 @@ export const createUser = (data) => async (dispatch) => {
 }
 
 export const deleteUser = (id) => async (dispatch) => {
-    dispatch(reqUser());
       const options = {
         method:'DELETE',
         headers:{
@@ -74,9 +72,21 @@ export const deleteUser = (id) => async (dispatch) => {
         await res.json();
         dispatch(deleteUserSuccess(id))
         
-
       }catch(err){
           console.log(err)
       }
     
 }
+
+export const editUserModal = (id) => (dispatch) => {
+    dispatch(reqUser());
+    dispatch(editUser(id));
+}
+
+export const deleteUserModal = () => (dispatch) => {
+    dispatch(reqUser());
+    dispatch(editUserDelete());
+}
+
+
+editUserDelete

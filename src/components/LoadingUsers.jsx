@@ -1,11 +1,15 @@
-import {Container, Row, Col} from '@nextui-org/react';
+import {Container, Row, Col, Loading} from '@nextui-org/react';
 
 export const LoadingUsers=() => (
     <Container>
       <Row
       >
-      <Col>
-      <Loading size="xl" />
+      <Col
+       style={{height:'100vh', display:'flex', justifyContent:'center', alignItems:'center'}}
+      >
+      <Loading size="xl" >
+        Loading
+      </Loading>
       </Col>
       </Row>
     </Container>

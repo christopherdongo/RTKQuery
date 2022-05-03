@@ -1,10 +1,14 @@
 import  {useEffect, useState} from 'react'
-import { NextUIProvider, Container, Row, Grid } from '@nextui-org/react';
-import {Header,CardUser,LoadingUsers ,ModalCreate} from './components'
+import { NextUIProvider, Container, Row, Grid, Button } from '@nextui-org/react';
+import {Header,CardUser,LoadingUsers ,ModalEdit,NoUsers} from './components'
 import { useDispatch, useSelector } from "react-redux";
 import { listUsers } from "./redux/actions/user";
+import {AiOutlineUserSwitch} from 'react-icons/ai';
 
 function App() {
+
+  const [visible, setVisible] = useState(false);
+  const [type, setType] = useState(null);
 
   const [profiles, setProfiles] = useState([]);
   const { loading, users } = useSelector((state) => state.User);
@@ -20,10 +24,23 @@ function App() {
      })
   },[users])
 
+  const handler = () => setVisible(true);
 
+  const ActivateModal=(create)=>{
+    handler();
+    setType(create)
+  }
+  
+  const closeHandler = () => {
+    setVisible(false);
+    
+  };
 
-  if(loading) <LoadingUsers />
+  if(loading) {
+     return <LoadingUsers />
+  }
 
+  if(users.length===0) return <><Header /> <NoUsers /></>
 
   return (
      <NextUIProvider>
@@ -34,9 +51,14 @@ function App() {
             <Row
             style={{marginTop:'20px', display:'flex', alignItems:'center', justifyContent:'flex-end'}}
             >
+
+<Button size="sm" color="default"
+            onClick={() => ActivateModal('create')}
+            >
+              <AiOutlineUserSwitch size={20} />
+             Create User
+            </Button>
  
-              <ModalCreate />
-             
             </Row>
              <Row
              style={{marginTop:'20px'}}
@@ -54,6 +76,7 @@ function App() {
                 ))}
                </Grid.Container>
              </Row>
+             <ModalEdit closeHandler={closeHandler}  idProfile={null} visible={visible} type={type} setIdProfile={null}/>
           </Container>
      </NextUIProvider>
   )

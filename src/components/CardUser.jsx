@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Card, Row, Text, Grid, Button, Divider } from "@nextui-org/react";
+import {AiOutlineEdit, AiOutlineDelete} from 'react-icons/ai';
 import { useDispatch } from "react-redux";
 import {deleteUser} from '../redux/actions/user'
 import {ModalEdit} from './ModalEdit';
@@ -7,14 +8,16 @@ export const CardUser = ({ last_name, id, first_name, email }) => {
 
   const [visible, setVisible] = useState(false);
   const [idProfile, setIdProfile] = useState(null);
+  const [type, setType] = useState(null);
 
   const dispatch = useDispatch();
 
   const handler = () => setVisible(true);
 
-  const ActivateModal=(id)=>{
+  const ActivateModal=(id, edit)=>{
     handler();
     setIdProfile(id);
+    setType(edit)
   }
   
   const closeHandler = () => {
@@ -24,9 +27,6 @@ export const CardUser = ({ last_name, id, first_name, email }) => {
   const deleteUserId=(id)=>{
     dispatch(deleteUser(id))
   }
-
-
-
 
 
   return (
@@ -56,19 +56,25 @@ export const CardUser = ({ last_name, id, first_name, email }) => {
             <Button size="xs" color="error" 
             onClick={()=>deleteUserId(id)}
             >
-              eliminar
+           
+              <AiOutlineDelete size={20} />
+
+         
             </Button>
 
             <Button size="xs" color="default"
-            onClick={() => ActivateModal(id)}
+            onClick={() => ActivateModal(id, 'edit')}
             >
-              editar
+           
+              <AiOutlineEdit size={20} />
+             
+           
             </Button>
             
           </Row>
         </Card.Footer>
       </Card>
-      <ModalEdit closeHandler={closeHandler}  visible={visible} idProfile={idProfile}/>
+      <ModalEdit closeHandler={closeHandler}  visible={visible} idProfile={idProfile} type={type} setIdProfile={setIdProfile}/>
     </>
     
   );

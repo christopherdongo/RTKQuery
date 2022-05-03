@@ -2,15 +2,16 @@ import {useState, useEffect} from 'react'
 import { Modal, Button, Text, Input } from "@nextui-org/react";
 import {MdOutlineEmail} from 'react-icons/md'
 import { useDispatch, useSelector } from "react-redux";
-import {updateUser} from '../redux/actions/user'
+import {editUserModal, deleteUserModal, createUser} from '../redux/actions/user'
+import { updateUser } from '../redux/actions/user'
 import {CgProfile} from 'react-icons/cg'
 import{ImProfile} from 'react-icons/im'
-export const ModalEdit =({ closeHandler, visible,idProfile}) => {
+export const ModalEdit =({ closeHandler, visible,idProfile, type, setIdProfile}) => {
     const [profile, setProfile] = useState({});
-    const { users } = useSelector((state) => state.User);
+    const { userEdit } = useSelector((state) => state.User);
 
     const dispatch = useDispatch();
-    const onChange =(e)=>{
+    /*const onChange =(e)=>{
      const {name, value} = e.target;
 
        setProfile(old => {
@@ -19,25 +20,42 @@ export const ModalEdit =({ closeHandler, visible,idProfile}) => {
           [name]:value
          }
        })
+    }*/
+
+    const closeModal=()=>{
+      dispatch(deleteUserModal())
+      if(setIdProfile) setIdProfile(null);
+      closeHandler()
     }
+
 
     const onSubmitData=(e)=>{
       e.preventDefault();
       const {id, ...newdata} = profile;
+      if(type === 'edit'){
       dispatch(updateUser(id, newdata))
       closeHandler();
+      }else{
+        dispatch(createUser(newdata))
+        closeHandler()
+      }
+      
     }
 
     useEffect(() => {
-        if(idProfile !==null){
-            const data = users.filter(user => user.id === idProfile);
-            setProfile(old => {
-                return {
-                    ...data[0]
-                }
-            })
-        }
+       if(idProfile !==null){
+        dispatch(editUserModal(idProfile));
+       }
+
     }, [idProfile]);
+
+    useEffect(()=>{
+         setProfile(old => {
+           return{
+            ...userEdit,   
+          }
+         })
+    },[userEdit])
 
 
   return (
@@ -46,11 +64,11 @@ export const ModalEdit =({ closeHandler, visible,idProfile}) => {
       closeButton
       aria-labelledby="modal-title"
       open={visible}
-      onClose={closeHandler}
+      onClose={closeModal}
     >
       <Modal.Header>
         <Text id="modal-title" size={18}>
-          Update
+          {type === 'edit' ? 'Edit' : 'Create'}
           <Text b size={18} style={{paddingLeft:'10px'}}>
             Profile
           </Text>
@@ -71,8 +89,13 @@ export const ModalEdit =({ closeHandler, visible,idProfile}) => {
           contentLeft={<CgProfile />}
           type="text"
           name="first_name"
-          value={profile.first_name}
-          onChange={onChange}
+          value={profile?.first_name}
+          onChange={(e)=> setProfile(old => {
+            return{
+              ...old,
+              [e.target.name]: e.target.value
+            }
+          })}
         />
           
           <Input
@@ -86,8 +109,14 @@ export const ModalEdit =({ closeHandler, visible,idProfile}) => {
           placeholder="last name"
           contentLeft={<ImProfile />}
           name="last_name"
-          value={profile.last_name}
-          onChange={onChange}
+          value={profile?.last_name}
+          
+          onChange={(e)=> setProfile(old => {
+            return{
+              ...old,
+              [e.target.name]: e.target.value
+            }
+          })}
         />
 
         <Input
@@ -100,14 +129,24 @@ export const ModalEdit =({ closeHandler, visible,idProfile}) => {
           size="lg"
           placeholder="email"
           contentLeft={<MdOutlineEmail />}
-          value={profile.email}
+          value={profile?.email}
           name="email"
-          onChange={onChange}
+          
+          onChange={(e)=> setProfile(old => {
+            return{
+              ...old,
+              [e.target.name]: e.target.value
+            }
+          })}
           
         />
 
-         <Button type='submit' auto flat color="default" >
-          update
+         <Button type='submit' auto  color="gradient" >
+          <Text 
+          color='white'
+          >
+           {type === 'edit' ? 'Edit' : 'Create'}
+          </Text>
         </Button>
 
         </form>
